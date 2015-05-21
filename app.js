@@ -42,20 +42,22 @@ app.use(function(req, res, next) {
   next();
 });
 
+// Práctica 2.5.1
 app.use(function(req, res, next) {
   if (req.session.hora != undefined) {
     ahora = (+new Date);
     console.log("Hora sess ", req.session.hora);
-    if ((ahora - req.session.hora < 2000)) {
+    if ((ahora - req.session.hora <= 120000)) {
       req.session.hora = ahora;
     }
-    else {
-      console.log("Estoy aaaaaaaaaaaaaaaaaaaaa", req.path);
+    else { //sesión inactiva más de dos minutos
+      console.log("Sesión ha expirado!!!");
       if (!req.path.match(/\/login|\/logout/)) {
-        req.session.destroy();
+        //req.session.destroy();
+        var sessionController = ('controllers/session_controller');
+        var router = express.Router();
+        router.get('/logout', sessionController.destroy);
       }
-
-
     }
   }
   next();

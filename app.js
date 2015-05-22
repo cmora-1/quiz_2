@@ -47,16 +47,15 @@ app.use(function(req, res, next) {
   if (req.session.hora != undefined) {
     ahora = (+new Date);
     console.log("Hora sess ", req.session.hora);
-    if ((ahora - req.session.hora <= 120000)) {
+    if ((ahora - req.session.hora <= 120000)) {  // 2 mins en msecs
       req.session.hora = ahora;
     }
     else { //sesión inactiva más de dos minutos
       console.log("Sesión ha expirado!!!");
       if (!req.path.match(/\/login|\/logout/)) {
-        //req.session.destroy();
-        var sessionController = ('controllers/session_controller');
-        var router = express.Router();
-        router.get('/logout', sessionController.destroy);
+        delete req.session.user;
+        delete req.session.hora;
+        req.flash('info', 'La sesión ha caducado.');
       }
     }
   }
@@ -98,6 +97,5 @@ app.use(function(err, req, res, next) {
         errors: []
     });
 });
-
 
 module.exports = app;

@@ -63,7 +63,10 @@ Quiz.findAll().then(
              var idBuscado = quizes[i].id;
 
              Comment.count({where: ['Quiz.id = ?', idBuscado],
-                                   include: [Quiz]}).then(
+                                   include:
+                                    [
+                                       {model: Quiz}
+                                    ]}).then(
                   function(count) {
                     if (count > 0) ++pregcomm;
                     exports.QuizWithComment = pregcomm;

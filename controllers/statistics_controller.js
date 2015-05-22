@@ -57,9 +57,7 @@ exports.load = function(req, res) {
                models.Comment.count({where: ['Quiz.id = ?', idBuscado],
                                      include:
                                      [
-                                       {model: models.Quiz,
-                                        attributes: ['id']
-                                       }
+                                       {model: models.Quiz}
                                      ]}).then(
                     function(count) {
                       if (count > 0) ++pregcomm;

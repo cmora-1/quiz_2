@@ -37,7 +37,10 @@ router.get('/quizes/:quizId(\\d+)/comments/:commentId(\\d+)/publish',
             sessionController.loginRequired, commentController.publish);
 
 // Definición de rutas para estadísticas
-router.get('/quizes/statistics',             statsController.load);
-router.get('/quizes/statistics/show',        statsController.show);
+router.get('/quizes/statistics',            statsController.load);
+router.get('/quizes/statistics/ld1',        statsController.ld1);
+router.get('/quizes/statistics/ld2',        statsController.ld2);
+router.get('/quizes/statistics2/:statId',    statsController.ld3);
+router.get('/quizes/statistics/mostrar',       statsController.mostrar);
 
 module.exports = router;

@@ -41,41 +41,6 @@ Quiz.hasMany(Comment);
 exports.Quiz = Quiz; // exportar tabla Quiz
 exports.Comment = Comment;
 
-var nq, nc, pregcomm;
-
-Quiz.count().then(
-  function (count){
-  nq = count;
-  exports.NumQ = nq;
-});
-
-Comment.count().then(
-  function (count){
-  nc = count;
-  exports.NumC = nc;
-});
-
-Quiz.findAll().then(
-         function(quizes) {
-           var i;
-           pregcomm = 0;
-           for (i=0; i < quizes.length; i++) {
-             var idBuscado = quizes[i].id;
-
-             Comment.count({where: ['Quiz.id = ?', idBuscado],
-                                   include:
-                                    [
-                                       {model: Quiz}
-                                    ]}).then(
-                  function(count) {
-                    if (count > 0) ++pregcomm;
-                    exports.QuizWithComment = pregcomm;
-                  });
-          } //for
-});
-
-
-
 // sequelize.sync() inicializa tabla de preguntas en DB
 sequelize.sync().then(function() {
   // then(..) ejecuta el manejador una vez creada la tabla

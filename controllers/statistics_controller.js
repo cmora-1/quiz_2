@@ -5,24 +5,17 @@ var countq, countc;
 var NumQ;
 var NumC;
 var QuizWithComment;
+var i;
 
-exports.show = function(req, res) {
+exports.mostrar = function(req, res) {
   console.log('SHOWING...', this.NumQ, this.NumC, this.QuizWithComment);
   var nq, nc, nqc;
-  if (this.NumQ === undefined)
-    nq = models.NumQ;
-  else
+
    nq = this.NumQ;
 
-   if (this.NumC === undefined)
-     nc = models.NumC;
-   else
-    nc = this.NumC;
+   nc = this.NumC;
 
-    if (this.QuizWithComment === undefined)
-      nqc = models.QuizWithComment;
-    else
-     nqc = this.QuizWithComment;
+   nqc = this.QuizWithComment;
 
   res.render('statistics/show.ejs',
   { contquizes: nq,
@@ -35,36 +28,52 @@ exports.show = function(req, res) {
 };
 
 exports.load = function(req, res) {
+  this.QuizWithComment = 0; i = 0;
   models.Quiz.count().then(
     function (count){
     var nq = count;
     this.NumQ = nq;
+    res.redirect('/quizes/statistics/ld1');
   });
+}
 
+exports.ld1 = function(req, res) {
   models.Comment.count().then(
     function (count){
     var nc = count;
     this.NumC = nc;
+    res.redirect('/quizes/statistics/ld2');
   });
+}
 
-  models.Quiz.findAll().then(
-           function(quizes) {
-             var i;
-             var pregcomm = 0;
-             for (i=0; i < quizes.length; i++) {
-               var idBuscado = quizes[i].id;
 
-               models.Comment.count({where: ['Quiz.id = ?', idBuscado],
-                                     include:
-                                     [
-                                       {model: models.Quiz}
-                                     ]}).then(
-                    function(count) {
-                      if (count > 0) ++pregcomm;
-                      this.QuizWithComment = pregcomm;
-                    });
-            } //for
+exports.ld2 = function(req, res) {
+  if (i < this.NumQ) {
+    models.Quiz.findAll().then(
+            function(quizes) {
+              if (i < quizes.length) {
+                var idBuscado = quizes[i++].id;
+                var myUrl;
+                 myUrl = '/quizes/statistics2/'+idBuscado;
+                 console.log("QID=",  myUrl);
+                 res.redirect(myUrl);
+            }
+    });
+  }
+  else {
+    res.redirect('/quizes/statistics/mostrar');
+  }
+};
+
+exports.ld3 = function(req, res) {
+  models.Comment.count({where: ['Quiz.id = ?', req.params.statId],
+                        include:
+                        [
+                          {model: models.Quiz}
+                        ]}).then(
+       function(count) {
+         if (count > 0) ++this.QuizWithComment;
+
+         res.redirect('/quizes/statistics/ld2');
   });
-
-  res.redirect('/quizes/statistics/show');
 };
